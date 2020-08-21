@@ -41,6 +41,10 @@ export class userController {
   authentification(@Param('email')email:string,@Param('password')password:string){
     return this.usersService.authentifcation(email,password);
   }
+  @Get('/findId/:email/:password')
+  findID(@Param('email')email:string,@Param('password')password:string){
+    return this.usersService.findId(email,password);
+  }
 
 
 

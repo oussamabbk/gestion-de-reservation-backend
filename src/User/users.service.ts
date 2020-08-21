@@ -83,4 +83,26 @@ export class usersService {
 
 
   }
+  async findId(email: string,password:string){
+
+
+
+      const users = await this.userModel.find().exec();
+
+
+      for (let i = 0; i < users.length; i++) {
+        if(users[i].email==email&&users[i].password==password){
+          return ""+users[i].id;
+
+        }
+
+
+      }
+
+
+
+    }
+
+
+
 }

@@ -9,33 +9,27 @@ import {
 } from '@nestjs/common';
 import { reservationsService } from './reservations.service';
 
-@Controller('reservation')
-export class userController {
-  constructor(private readonly ReservationsService: reservationsService) {}
+@Controller('reserv')
+export class ReservationController {
+  constructor(private readonly reservationsService: reservationsService) {}
   @Post()
-  async addProduct(
-    @Body('Date') date: string,
-    @Body('datedebut') datedebut: number,
-    @Body('datefin') datefin: number,
-    @Body('numerode') numerode: number,
-    @Body('Description') Description: string,
+  async addreservation(
+    @Body('Datedebut') Datedebut: Date,
+    @Body('Datedefin') datedefin: Date,
+    @Body('ressourceId') ressouceId: string,
+    @Body('userId') useerID: string,
+
 
   ) {
-    const date1 = new Date('2017-03-07T10:00:00');
 
-    const generatedId = await this.ReservationsService.insertreservation(date1,datedebut,datefin,numerode,Description);
+
+    const generatedId = await this.reservationsService.insertreservation(Datedebut,datedefin,ressouceId,useerID);
     return { id: generatedId };
   }
   @Get()
-  async getAllreservation() {
-    const reservation = await this.ReservationsService.getreservation();
-    return reservation
-      ;
+  async getAllProducts() {
+    const resevations = await this.reservationsService.getusers();
+    return resevations;
   }
 
-
-
-
 }
-
-
