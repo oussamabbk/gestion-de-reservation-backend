@@ -28,8 +28,35 @@ export class ReservationController {
   }
   @Get()
   async getAllProducts() {
-    const resevations = await this.reservationsService.getusers();
+    const resevations = await this.reservationsService.getreserva();
     return resevations;
+  }
+  /*@Get()
+  async findreservation() {
+    const resevations = await this.reservationsService.reservationwithressources();
+    return resevations;
+  }*/
+  /*@Get()
+  async ifreservedornot() {
+    const resevations = await this.reservationsService.reservationwithressources();
+    return resevations;
+  }*/
+  @Get('/reservedornot/:datedebut/:datefin/:userId/:ressourceID')
+  async reservedornot(@Param('datedebut')datedebut:Date,@Param('datefin')datefin:Date,@Param('userId')userId:string,@Param('ressourceID')ressourceID:string){
+    const isReserved = await this.reservationsService.isrecervedornnot(datedebut,datefin,userId,ressourceID);
+    //return this.reservationsService.isrecervedornnot(datedebut,datefin,userId,ressourceID);
+    return isReserved;
+
+  }
+  @Get('/whorecerved/:localDate/:ressourceId')
+  async  whorecerved(@Param('localDate')localDate:Date,@Param('ressourceId')ressourceId:string){
+    const whorecerved = await this.reservationsService.whorecerved(localDate,ressourceId);
+    return whorecerved;
+  }
+  @Get('historique/:UserID')
+  async historique(@Param('UserID')UserID:string){
+    const historique = await this.reservationsService.gethistorique(UserID);
+    return historique;
   }
 
 }

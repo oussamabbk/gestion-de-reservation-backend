@@ -32,8 +32,12 @@ export class ressoucesController {
   @Get()
   async getAllreservation() {
     const reservation = await this.ReservationsService.getreservation();
-    return reservation
-      ;
+    return reservation;
+  }
+  @Get('singleressource/:ressourceID')
+  async getressourceswithId(@Param('ressourceID')ressourceID:string){
+    const reservation = await this.ReservationsService.getressourcewithId(ressourceID);
+    return reservation;
   }
 
 

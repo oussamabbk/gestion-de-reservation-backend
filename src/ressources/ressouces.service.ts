@@ -31,6 +31,7 @@ export class ressoucesService {
   }
   async getreservation() {
     const reservations = await this.RessoucesModule.find().exec();
+
     return reservations.map(reservation => ({
       id: reservation.id,
       Model: reservation.Model,
@@ -44,6 +45,11 @@ export class ressoucesService {
 
     }));
   }
+  async getressourcewithId(ressourceID){
+    const reservations = await this.RessoucesModule.find({id:ressourceID}).exec();
+    return reservations;
+  }
+
 
 
 
