@@ -3,13 +3,15 @@ import { Dependencies, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { user, UserSchema } from './user.model';
-
+import{authService}from 'src/auth/authService'
+import { map } from 'rxjs/operators';
 
 @Injectable()
 @Dependencies(InjectModel(UserSchema))
 export class usersService {
   constructor(
     @InjectModel('User') private readonly userModel: Model<user>,
+    private AuthService :authService
   ) {}
   async insertuser(email: string, password: string) {
     const newuser = new this.userModel({
@@ -65,18 +67,14 @@ export class usersService {
 
           for (let i = 0; i < users.length; i++) {
             if(users[i].email==email&&users[i].password==password){
-              return "login succes"
+                  return this.AuthService.generateJWT(users[i]).pipe(map((jwt:string)=>jwt))
+
 
             } else{
 
-              return "no fucked login"
+              return "wrong"
             }
-
-
           }
-
-
-
         }else{
           return  "email not valid "
         }
