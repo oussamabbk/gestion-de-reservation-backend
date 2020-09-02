@@ -1,18 +1,21 @@
 
-import { Dependencies, Injectable, NotFoundException } from '@nestjs/common';
+import { Dependencies, Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { user, UserSchema } from './user.model';
-import{authService}from 'src/auth/authService'
+import { authService } from '../auth/authService'
 import { map } from 'rxjs/operators';
 
 @Injectable()
 @Dependencies(InjectModel(UserSchema))
 export class usersService {
   constructor(
-    @InjectModel('User') private readonly userModel: Model<user>,
-    private AuthService :authService
-  ) {}
+    @Inject(forwardRef(() => authService)) private authService: authService,
+    @InjectModel('User') private readonly userModel: Model<user>
+
+
+  ) { }
+
   async insertuser(email: string, password: string) {
     const newuser = new this.userModel({
       email,
@@ -42,9 +45,6 @@ export class usersService {
     };
   }
 
-
-
-
   private async findProduct(id: string): Promise<user> {
     let user;
     try {
@@ -57,49 +57,32 @@ export class usersService {
     }
     return user;
   }
-   async authentifcation(email: string,password:string){
-     const regexpEmail =
-       new RegExp('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$');
-     const x=regexpEmail.test(email);
-        if(x){
-          const users = await this.userModel.find().exec();
 
-
-          for (let i = 0; i < users.length; i++) {
-            if(users[i].email==email&&users[i].password==password){
-                  return this.AuthService.generateJWT(users[i]).pipe(map((jwt:string)=>jwt))
-
-
-            } else{
-
-              return "wrong"
-            }
-          }
-        }else{
-          return  "email not valid "
-        }
-
-
-  }
-  async findId(email: string,password:string){
-
-
-
+  async authentifcation(email: string, password: string) {
+    const regexpEmail = new RegExp('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$');
+    if (regexpEmail.test(email)) {
       const users = await this.userModel.find().exec();
-
-
       for (let i = 0; i < users.length; i++) {
-        if(users[i].email==email&&users[i].password==password){
-          return ""+users[i].id;
-
+        if (users[i].email == email && users[i].password == password) {
+          return this.authService.generateJWT(users[i]).pipe(map((jwt: string) => jwt))
+          // return users[i];
+        } else {
+          return "wrong"
         }
-
-
       }
-
-
-
+    } else {
+      return "email not valid "
     }
+  }
+
+  async findId(email: string, password: string) {
+    const users = await this.userModel.find().exec();
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].email == email && users[i].password == password) {
+        return "" + users[i].id;
+      }
+    }
+  }
 
 
 

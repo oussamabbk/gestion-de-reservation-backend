@@ -1,4 +1,4 @@
-import { Dependencies, Injectable } from '@nestjs/common';
+import { Dependencies, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { reservation, reservationSchema } from './reservation.model';
 import { Model } from 'mongoose';
@@ -46,17 +46,19 @@ export class reservationsService {
   }*/
   async isrecervedornnot(datedebut,datefin,userID,ressourceID){
     const reservations = await this.reservationModel.find().exec();
+    let x="isrecerved"
 
     for(const i in reservations){
       if(reservations[i].ressourceId==ressourceID){
-        if((reservations[i].datedebut<datedebut && reservations[i].datefin<datefin)|| (reservations[i].datedebut>datefin)){
-          return "isnotereserved";
+        if((reservations[i].datefin<datedebut)|| (reservations[i].datedebut<datefin) ){
+          x= "isnotereserved";
+          console.log(x);
         }
       }
 
 
     }
-    return "isrecerved";
+    return x;
 
   }
   async whorecerved(localeDate,ressourceID){
@@ -75,6 +77,64 @@ export class reservationsService {
 
     return reservations;
 
+
+  }
+  async updateReservation(Id,Datedebut: Date, Datedefin: Date,ressourceId:string,userId:string) {
+    /*const newuser = new this.reservationModel({
+      Id:Id,
+      Datedebut:Datedebut,
+      Datedefin: Datedefin,
+      ressourceId:ressourceId,
+      userId:userId,
+    });*/
+    const newuser = await this.reservationModel.findById(Id).exec();
+    if (Datedebut) {
+      newuser.Datedebut = Datedebut;
+    }
+    if (Datedefin) {
+      newuser.Datedefin = Datedefin;
+    }
+    if (ressourceId) {
+      newuser.ressourceId = ressourceId;
+    }if(userId){
+      newuser.userId=userId;
+    }
+    newuser.save();
+
+
+
+
+
+
+
+
+
+
+  }
+   async Delete(id: string){
+    const result = await this.reservationModel.deleteOne({_id: id}).exec();
+    if (result.n === 0) {
+      throw new NotFoundException('Could not find product.');
+    }
+
+  }
+
+
+
+
+
+  private async findreservation(id: string): Promise<reservation> {
+    let reserv;
+    try {
+      reserv = await this.reservationModel.findById(id).exec();
+    } catch (error) {
+      throw new NotFoundException('Could not find product.');
+    }
+    if (!reserv) {
+      throw new NotFoundException('Could not find product.');
+    }if(reserv){
+      return reserv;
+    }
 
   }
 

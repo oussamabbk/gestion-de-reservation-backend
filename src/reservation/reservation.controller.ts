@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Patch,
-  Delete, UsePipes,
+  Delete, UsePipes, Put,
 } from '@nestjs/common';
 import { reservationsService } from './reservations.service';
 
@@ -57,6 +57,24 @@ export class ReservationController {
   async historique(@Param('UserID')UserID:string){
     const historique = await this.reservationsService.gethistorique(UserID);
     return historique;
+  }
+  @Put('update')
+  async updatereservation(
+    @Body('_id') Id: string,
+    @Body('Datedebut') Datedebut: Date,
+    @Body('Datedefin') datedefin: Date,
+    @Body('ressourceId') ressouceId: string,
+    @Body('userId') useerID: string,
+  ) {
+
+
+    const generatedId = await this.reservationsService.updateReservation(Id,Datedebut,datedefin,ressouceId,useerID);
+    return { id: generatedId };
+  }
+  @Delete(':id')
+  async removereservation(@Param('id') prodId: string) {
+    await this.reservationsService.Delete(prodId);
+    return null;
   }
 
 }
